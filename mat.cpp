@@ -1,6 +1,7 @@
 #include"mat.h"
-
+#include<math.h>
 #include<stdarg.h>
+#include<iostream>
 
 namespace Adina {
 	mat::mat() {
@@ -88,6 +89,17 @@ namespace Adina {
 
 		return *rez;
 	}
+	bool mat::operator==(const mat & b)
+	{
+		for (int i = 0; i < dim; i++) {
+			for (int j = 0; j < dim; j++) {
+				if (m[i][j] != b.m[i][j]) {
+					return false;
+				}
+			}
+		}
+		return true;
+	}
 	mat mat::transpose()
 	{
 		mat* rez = new mat(dim);
@@ -100,9 +112,7 @@ namespace Adina {
 	}
 	mat mat::minorPrincipal(int idim)
 	{
-		if (dim == 0) {
-			dim = 1;
-		}
+		if (dim == 0) { dim = 1; }/// only a check for some safty
 		mat* rez = new mat(idim);
 		for (int i = 0; i < idim; i++) {
 			for (int j = 0; j < idim; j++) {
@@ -110,6 +120,48 @@ namespace Adina {
 			}
 		}
 		return *rez;
+	}
+	mat mat::getMat(int jr) const
+	{
+		mat* rez = new mat(dim - 1);
+
+		for (int i = 0; i < rez->dim; i++) {
+			for (int j = 0; j < rez->dim; j++) {
+				if (j < jr) {
+					rez->m[i][j] = m[i + 1][j];
+				}else{
+					rez->m[i][j] = m[i + 1][j + 1];
+				}
+			}
+		}
+		return *rez;
+	}
+	float mat::det2x(const mat & b)
+	{
+		float rez = b.m[0][0] * b.m[1][1] - b.m[0][1] * b.m[1][0];
+		return rez;
+	}
+	float mat::det(const mat & b)
+	{
+		float rez = 0;
+		if (b.dim == 2) {
+			rez += det2x(b);
+		}else{
+			for (int i = 0; i < b.dim; i++) {
+				mat aux = b.getMat(i);
+				if ((i + 1) % 2 == 0) {
+					rez += +b.m[0][i] * det(aux);
+				}
+				else {
+					rez -= +b.m[0][i] * det(aux);
+				}
+			}
+		}
+		return rez;
+	}
+	mat mat::inverse()
+	{
+		return mat();
 	}
 	std::ostream & operator<<(std::ostream & output, const mat & m)
 	{
