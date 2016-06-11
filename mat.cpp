@@ -5,7 +5,7 @@
 
 namespace Adina {
 	mat::mat() {
-
+		dim = 0;
 	}
 	mat::mat(int dim)
 	{
@@ -37,17 +37,40 @@ namespace Adina {
 			}
 		}
 	}
-	void mat::setM(int start...)
+	void mat::setM(float** v)
 	{
-		va_list ap;
-		start = 0;
-		va_start(ap, start);
 		for (int i = 0; i < dim; i++) {
 			for (int j = 0; j < dim; j++) {
-				this->m[i][j] = va_arg(ap, double);
+				this->m[i][j] = v[i][j];
 			}
 		}
-		va_end(ap);
+	}
+	void mat::setM(int dim, float ** v)
+	{
+		this->dim = dim;
+		m = new float*[dim];
+		for (int i = 0; i < dim; i++) {
+			m[i] = new float[dim];
+		}
+		for (int i = 0; i < dim; i++) {
+			for (int j = 0; j < dim; j++) {
+				m[i][j] = v[i][j];
+			}
+		}
+	}
+	mat & mat::operator=(const mat & b)
+	{
+		this->dim = b.dim;
+		m = new float*[dim];
+		for (int i = 0; i < dim; i++) {
+			m[i] = new float[dim];
+		}
+		for (int i = 0; i < dim; i++) {
+			for (int j = 0; j < dim; j++) {
+				m[i][j] = b.m[i][j];
+			}
+		}
+		return *this;
 	}
 	mat mat::operator+(const mat & b)
 	{
@@ -91,6 +114,9 @@ namespace Adina {
 	}
 	bool mat::operator==(const mat & b)
 	{
+		if (dim != b.dim) {
+			return false;
+		}
 		for (int i = 0; i < dim; i++) {
 			for (int j = 0; j < dim; j++) {
 				if (m[i][j] != b.m[i][j]) {
@@ -136,6 +162,30 @@ namespace Adina {
 		}
 		return *rez;
 	}
+	mat mat::getMat(int ic,int jc) const
+	{
+		mat* rez = new mat(dim - 1);
+
+		for (int i = 0; i < rez->dim; i++) {
+			for (int j = 0; j < rez->dim; j++) {
+				if (i < ic && j < jc) { 
+					rez->m[i][j] = m[i][j]; 
+				}
+				else if (i >= ic && j < jc) { 
+					rez->m[i][j] = m[i + 1][j]; 
+				}
+				else {
+					if (i >= ic && j >= jc) {
+						rez->m[i][j] = m[i + 1][j + 1];
+					}
+					else {
+						rez->m[i][j] = m[i][j + 1];
+					}
+				}
+			}
+		}
+		return *rez;
+	}
 	float mat::det2x(const mat & b)
 	{
 		float rez = b.m[0][0] * b.m[1][1] - b.m[0][1] * b.m[1][0];
@@ -158,6 +208,10 @@ namespace Adina {
 			}
 		}
 		return rez;
+	}
+	mat mat::cofactor()
+	{
+		return mat();
 	}
 	mat mat::inverse()
 	{
