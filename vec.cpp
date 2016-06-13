@@ -13,7 +13,7 @@ namespace Adina {
 	{
 		v = new float[dim];
 		for (int i = 0; i < dim; i++) {
-			v[i] = i;
+			v[i] = 0;
 		}
 	}
 
@@ -46,14 +46,6 @@ namespace Adina {
 		}
 		return *rez;
 	}
-	vec &vec::operator*(const vec & b)
-	{
-		vec* rez = new vec(dim);
-		for (int i = 0; i < dim; i++) {
-			rez->v[i] = v[i] * b.v[i];
-		}
-		return *rez;
-	}
 	vec &vec::operator*(const float & b)
 	{
 		vec* rez = new vec(dim);
@@ -74,7 +66,7 @@ namespace Adina {
 	std::ostream & operator<<(std::ostream & output, const vec & m)
 	{
 		for (int i = 0; i < m.dim; i++) {
-			output << m.v[i]<< std::endl;
+			output << m.v[i]<< "  ";
 		}
 		return output;
 	}

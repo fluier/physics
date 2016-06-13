@@ -16,7 +16,6 @@ namespace Adina {
 		/// operators
 		vec &operator+(const vec &b);
 		vec &operator-(const vec &b);
-		vec &operator*(const vec &b);
 		vec &operator*(const float &b);
 		bool operator==(const vec &b);
 		friend std::ostream &operator<<(std::ostream &output, const vec& m);
